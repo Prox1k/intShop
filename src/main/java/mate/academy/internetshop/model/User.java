@@ -19,7 +19,7 @@ public class User {
     }
 
     public Long getUserId() {
-        return userId;
+        return bucket.getUserId();
     }
 
     public void setUserId(Long userId) {

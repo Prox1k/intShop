@@ -1,6 +1,5 @@
 package mate.academy.internetshop.dao.impl;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import mate.academy.internetshop.dao.ItemDao;
@@ -19,36 +18,26 @@ public class ItemDaoImpl implements ItemDao {
     }
 
     @Override
-    public Optional<Item> get(Long id) {
-        return Optional.ofNullable(Storage.items
+    public Optional<Item> get(Long itemId) {
+        return Storage.items
                 .stream()
-                .filter(item -> item.getItemId().equals(id))
-                .findFirst()
-                .orElseThrow(()
-                        -> new NoSuchElementException("Can't find item with id " + id)));
+                .filter(item -> item.getItemId().equals(itemId))
+                .findFirst();
     }
 
     @Override
     public Item update(Item item) {
         Optional<Item> updatedItemOptional = get(item.getItemId());
-        if (updatedItemOptional.isPresent()) {
-            Item updatedItem = updatedItemOptional.get();
-            updatedItem.setPrice(item.getPrice());
-            updatedItem.setItemId(item.getItemId());
-            updatedItem.setName(item.getName());
-            return updatedItem;
-        }
-        return item;
+        Item updatedItem = updatedItemOptional.get();
+        updatedItem.setPrice(item.getPrice());
+        updatedItem.setItemId(item.getItemId());
+        updatedItem.setName(item.getName());
+        return updatedItem;
     }
 
     @Override
-    public boolean delete(Long id) {
-        Optional<Item> deletedItemOptional = get(id);
-        if (deletedItemOptional.isPresent()) {
-            Item deletedItem = deletedItemOptional.get();
-            Storage.items.removeIf(item -> item.equals(deletedItem));
-            return true;
-        }
-        return false;
+    public boolean delete(Long itemId) {
+        Storage.items.removeIf(i -> i.getItemId().equals(itemId));
+        return true;
     }
 }

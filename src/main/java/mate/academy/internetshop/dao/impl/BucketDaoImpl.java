@@ -1,6 +1,5 @@
 package mate.academy.internetshop.dao.impl;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import mate.academy.internetshop.dao.BucketDao;
@@ -20,35 +19,25 @@ public class BucketDaoImpl implements BucketDao {
 
     @Override
     public Optional<Bucket> get(Long bucketId) {
-        return Optional.ofNullable(Storage.buckets
+        return Storage.buckets
                 .stream()
                 .filter(bucket -> bucket.getBucketId().equals(bucketId))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Can't find bucket with id "
-                        + bucketId)));
+                .findFirst();
     }
 
     @Override
     public Bucket update(Bucket bucket) {
         Optional<Bucket> updatedBucketOptional = get(bucket.getBucketId());
-        if (updatedBucketOptional.isPresent()) {
-            Bucket updatedBucket = updatedBucketOptional.get();
-            updatedBucket.setUserId(bucket.getUserId());
-            updatedBucket.setItems(bucket.getItems());
-            updatedBucket.setBucketId(bucket.getBucketId());
-            return updatedBucket;
-        }
-        return bucket;
+        Bucket updatedBucket = updatedBucketOptional.get();
+        updatedBucket.setUserId(bucket.getUserId());
+        updatedBucket.setItems(bucket.getItems());
+        updatedBucket.setBucketId(bucket.getBucketId());
+        return updatedBucket;
     }
 
     @Override
     public boolean delete(Long bucketId) {
-        Optional<Bucket> deletedBucketOptional = get(bucketId);
-        if (deletedBucketOptional.isPresent()) {
-            Bucket deletedBucket = deletedBucketOptional.get();
-            Storage.buckets.removeIf(bucket -> bucket.equals(deletedBucket));
-            return true;
-        }
-        return false;
+        Storage.buckets.removeIf(bucket -> bucket.getBucketId().equals(bucketId));
+        return true;
     }
 }

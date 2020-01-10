@@ -1,6 +1,5 @@
 package mate.academy.internetshop.dao.impl;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import mate.academy.internetshop.dao.Storage;
@@ -21,35 +20,25 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Optional<User> get(Long userId) {
-        return Optional.ofNullable(Storage.users
+        return Storage.users
                 .stream()
                 .filter(user -> user.getUserId().equals(userId))
-                .findFirst()
-                .orElseThrow(()
-                        -> new NoSuchElementException("Can't find user with id " + userId)));
+                .findFirst();
     }
 
     @Override
     public User update(User user) {
         Optional<User> updatedUserOptional = get(user.getUserId());
-        if (updatedUserOptional.isPresent()) {
-            User updatedUser = updatedUserOptional.get();
-            updatedUser.setUserId(user.getUserId());
-            updatedUser.setName(user.getName());
-            updatedUser.setBucket(user.getBucket());
-            return updatedUser;
-        }
-        return user;
+        User updatedUser = updatedUserOptional.get();
+        updatedUser.setUserId(user.getUserId());
+        updatedUser.setName(user.getName());
+        updatedUser.setBucket(user.getBucket());
+        return updatedUser;
     }
 
     @Override
     public boolean delete(Long userId) {
-        Optional<User> deletedUserOptional = get(userId);
-        if (deletedUserOptional.isPresent()) {
-            User deletedUser = deletedUserOptional.get();
-            Storage.users.removeIf(user -> user.getUserId().equals(deletedUser.getUserId()));
-            return true;
-        }
-        return false;
+        Storage.users.removeIf(u -> u.getUserId().equals(userId));
+        return true;
     }
 }

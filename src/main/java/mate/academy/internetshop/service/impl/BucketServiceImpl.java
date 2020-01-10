@@ -1,7 +1,6 @@
 package mate.academy.internetshop.service.impl;
 
 import java.util.List;
-import java.util.Optional;
 
 import mate.academy.internetshop.dao.BucketDao;
 import mate.academy.internetshop.dao.ItemDao;
@@ -25,8 +24,8 @@ public class BucketServiceImpl implements BucketService {
     }
 
     @Override
-    public Optional<Bucket> get(Long bucketId) {
-        return bucketDao.get(bucketId);
+    public Bucket get(Long bucketId) {
+        return bucketDao.get(bucketId).get();
     }
 
     @Override
@@ -35,34 +34,37 @@ public class BucketServiceImpl implements BucketService {
     }
 
     @Override
-    public void delete(Long id) {
-        bucketDao.delete(id);
+    public boolean delete(Long id) {
+        return bucketDao.delete(id);
     }
 
     @Override
-    public void addItem(Bucket bucket, Item item) {
-        Bucket newBucket = bucketDao.get(bucket.getBucketId()).get();
+    public boolean addItem(Bucket bucket, Item item) {
+        Bucket newBucket = get(bucket.getBucketId());
         newBucket.getItems().add(item);
         bucketDao.update(newBucket);
+        return true;
     }
 
     @Override
-    public void deleteItem(Bucket bucket, Item item) {
-        Bucket newBucket = bucketDao.get(bucket.getBucketId()).get();
+    public boolean deleteItem(Bucket bucket, Item item) {
+        Bucket newBucket = get(bucket.getBucketId());
         List<Item> itemOfBucket = newBucket.getItems();
         itemOfBucket.remove(item);
         bucketDao.update(newBucket);
+        return true;
     }
 
     @Override
-    public void clear(Bucket bucket) {
-        Bucket tempBucket = bucketDao.get(bucket.getBucketId()).get();
+    public boolean clear(Bucket bucket) {
+        Bucket tempBucket = get(bucket.getBucketId());
         tempBucket.getItems().clear();
         bucketDao.update(tempBucket);
+        return true;
     }
 
     @Override
     public List<Item> getAllItems(Bucket bucket) {
-        return bucketDao.get(bucket.getBucketId()).get().getItems();
+        return bucket.getItems();
     }
 }
