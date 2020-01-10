@@ -4,7 +4,6 @@ public class User {
 
     private String name;
     private Long userId;
-    private Bucket bucket;
 
     public User(String name) {
         this.name = name;
@@ -19,19 +18,11 @@ public class User {
     }
 
     public Long getUserId() {
-        return bucket.getUserId();
+        return userId;
     }
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public Bucket getBucket() {
-        return bucket;
-    }
-
-    public void setBucket(Bucket bucket) {
-        this.bucket = bucket;
     }
 
     @Override
@@ -39,7 +30,6 @@ public class User {
         return "User{"
                 + "name='" + name + '\''
                 + ", userId=" + userId
-                + ", bucket=" + bucket
                 + '}';
     }
 }

@@ -41,7 +41,6 @@ public class Main {
         Bucket bucket1 = new Bucket();
         bucketService.create(bucket1);
 
-        user1.setBucket(bucket1);
         System.out.println(Storage.users);
 
         Item item1 = new Item("Item 1", 1.0);
