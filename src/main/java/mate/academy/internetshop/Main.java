@@ -1,5 +1,8 @@
 package mate.academy.internetshop;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import mate.academy.internetshop.dao.Storage;
 import mate.academy.internetshop.lib.Inject;
 import mate.academy.internetshop.lib.Injector;
@@ -10,9 +13,6 @@ import mate.academy.internetshop.service.BucketService;
 import mate.academy.internetshop.service.ItemService;
 import mate.academy.internetshop.service.OrderService;
 import mate.academy.internetshop.service.UserService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
     @Inject
