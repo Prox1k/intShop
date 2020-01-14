@@ -1,5 +1,8 @@
 package mate.academy.internetshop.service.impl;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+
 import mate.academy.internetshop.dao.ItemDao;
 import mate.academy.internetshop.lib.Inject;
 import mate.academy.internetshop.lib.Service;
@@ -19,7 +22,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item get(Long itemId) {
-        return itemDao.get(itemId).get();
+        return itemDao.get(itemId).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
@@ -28,7 +31,17 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public boolean delete(Long id) {
-        return itemDao.delete(id);
+    public boolean deleteById(Long id) {
+        return itemDao.deleteById(id);
+    }
+
+    @Override
+    public boolean delete(Item item) {
+        return itemDao.delete(item);
+    }
+
+    @Override
+    public List<Item> getAll() {
+        return itemDao.getAll();
     }
 }

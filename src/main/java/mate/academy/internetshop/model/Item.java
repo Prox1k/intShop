@@ -7,6 +7,10 @@ public class Item {
     private String name;
     private Double price;
 
+    public Item() {
+        this.itemId = IdGenerator.getItemId();
+    }
+
     public Item(String name, double price) {
         this.name = name;
         this.price = price;
