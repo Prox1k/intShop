@@ -21,7 +21,7 @@ public class Injector {
         }
     }
 
-    public static void InjectDependency() throws IllegalAccessException {
+    public static void injectDependency() throws IllegalAccessException {
         for (Class certainClass : classes) {
             for (Field field :
                     certainClass.getDeclaredFields()) {
@@ -37,14 +37,6 @@ public class Injector {
         }
     }
 
-    /**
-     * Scans all classes accessible from the context class loader which belong to the given package and subpackages.
-     *
-     * @param packageName The base package
-     * @return The classes
-     * @throws ClassNotFoundException
-     * @throws IOException
-     */
     private static List<Class> getClasses(String packageName)
             throws ClassNotFoundException, IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -63,15 +55,8 @@ public class Injector {
         return classes;
     }
 
-    /**
-     * Recursive method used to find all classes in a given directory and subdirs.
-     *
-     * @param directory   The base directory
-     * @param packageName The package name for classes found inside the base directory
-     * @return The classes
-     * @throws ClassNotFoundException if the class cannot be located
-     */
-    private static List<Class> findClasses(File directory, String packageName) throws ClassNotFoundException {
+    private static List<Class> findClasses(File directory, String packageName)
+            throws ClassNotFoundException {
         List<Class> classes = new ArrayList<Class>();
         if (!directory.exists()) {
             return classes;
@@ -83,7 +68,8 @@ public class Injector {
                     assert !file.getName().contains(".");
                     classes.addAll(findClasses(file, packageName + "." + file.getName()));
                 } else if (file.getName().endsWith(".class")) {
-                    classes.add(Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
+                    classes.add(Class.forName(packageName + '.'
+                            + file.getName().substring(0, file.getName().length() - 6)));
                 }
             }
         }
