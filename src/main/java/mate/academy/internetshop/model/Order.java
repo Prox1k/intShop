@@ -1,5 +1,6 @@
 package mate.academy.internetshop.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
@@ -10,7 +11,7 @@ public class Order {
     private Double allPrice;
 
     public Order(List<Item> items, Double allPrice, User user) {
-        this.items = items;
+        this.items = new ArrayList<>(items);
         this.allPrice = allPrice;
         this.userId = user.getUserId();
     }

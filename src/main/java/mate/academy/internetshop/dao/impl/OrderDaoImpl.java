@@ -1,5 +1,7 @@
 package mate.academy.internetshop.dao.impl;
 
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import mate.academy.internetshop.dao.OrderDao;
@@ -13,7 +15,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public Order create(Order order) {
-        order.setOrderId(IdGenerator.getOrderId());
+        order.setOrderId(IdGenerator.incOrderId());
         Storage.orders.add(order);
         return order;
     }
@@ -29,7 +31,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Order update(Order order) {
         Optional<Order> updatedOrderOptional = get(order.getOrderId());
-        Order updatedOrder = updatedOrderOptional.get();
+        Order updatedOrder = updatedOrderOptional.orElseThrow(NoSuchElementException::new);
         updatedOrder.setItems(order.getItems());
         updatedOrder.setOrderId(order.getOrderId());
         updatedOrder.setUserId(order.getUserId());
@@ -38,8 +40,17 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public boolean delete(Long orderId) {
-        Storage.orders.removeIf(o -> o.getOrderId().equals(orderId));
-        return true;
+    public boolean deleteById(Long orderId) {
+        return Storage.orders.removeIf(o -> o.getOrderId().equals(orderId));
+    }
+
+    @Override
+    public boolean delete(Order order) {
+        return Storage.orders.remove(order);
+    }
+
+    @Override
+    public List<Order> getAll() {
+        return Storage.orders;
     }
 }

@@ -6,17 +6,8 @@ import mate.academy.internetshop.model.Item;
 import mate.academy.internetshop.model.Order;
 import mate.academy.internetshop.model.User;
 
-public interface OrderService {
-    Order create(Order order);
+public interface OrderService extends GenericService<Order, Long> {
+    public Order completeOrder(List<Item> items, User user);
 
-    Order get(Long id);
-
-    Order update(Order order);
-
-    boolean delete(Long id);
-
-    Order completeOrder(List<Item> items, User user);
-
-    List<Order> getUserOrders(User user);
-
+    public List<Order> getUserOrders(User user);
 }

@@ -1,5 +1,7 @@
 package mate.academy.internetshop.dao.impl;
 
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import mate.academy.internetshop.dao.BucketDao;
@@ -12,7 +14,7 @@ import mate.academy.internetshop.model.IdGenerator;
 public class BucketDaoImpl implements BucketDao {
     @Override
     public Bucket create(Bucket bucket) {
-        bucket.setBucketId(IdGenerator.getBucketId());
+        bucket.setBucketId(IdGenerator.incBucketId());
         Storage.buckets.add(bucket);
         return bucket;
     }
@@ -28,7 +30,7 @@ public class BucketDaoImpl implements BucketDao {
     @Override
     public Bucket update(Bucket bucket) {
         Optional<Bucket> updatedBucketOptional = get(bucket.getBucketId());
-        Bucket updatedBucket = updatedBucketOptional.get();
+        Bucket updatedBucket = updatedBucketOptional.orElseThrow(NoSuchElementException::new);
         updatedBucket.setUserId(bucket.getUserId());
         updatedBucket.setItems(bucket.getItems());
         updatedBucket.setBucketId(bucket.getBucketId());
@@ -36,8 +38,17 @@ public class BucketDaoImpl implements BucketDao {
     }
 
     @Override
-    public boolean delete(Long bucketId) {
-        Storage.buckets.removeIf(bucket -> bucket.getBucketId().equals(bucketId));
-        return true;
+    public boolean deleteById(Long bucketId) {
+        return Storage.buckets.removeIf(bucket -> bucket.getBucketId().equals(bucketId));
+    }
+
+    @Override
+    public boolean delete(Bucket bucket) {
+        return Storage.buckets.remove(bucket);
+    }
+
+    @Override
+    public List<Bucket> getAll() {
+        return Storage.buckets;
     }
 }

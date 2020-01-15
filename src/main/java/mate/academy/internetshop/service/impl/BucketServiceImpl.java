@@ -1,6 +1,7 @@
 package mate.academy.internetshop.service.impl;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import mate.academy.internetshop.dao.BucketDao;
 import mate.academy.internetshop.dao.ItemDao;
@@ -25,7 +26,7 @@ public class BucketServiceImpl implements BucketService {
 
     @Override
     public Bucket get(Long bucketId) {
-        return bucketDao.get(bucketId).get();
+        return bucketDao.get(bucketId).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
@@ -34,8 +35,18 @@ public class BucketServiceImpl implements BucketService {
     }
 
     @Override
-    public boolean delete(Long id) {
-        return bucketDao.delete(id);
+    public boolean deleteById(Long id) {
+        return bucketDao.deleteById(id);
+    }
+
+    @Override
+    public boolean delete(Bucket bucket) {
+        return bucketDao.delete(bucket);
+    }
+
+    @Override
+    public List<Bucket> getAll() {
+        return bucketDao.getAll();
     }
 
     @Override
@@ -66,5 +77,12 @@ public class BucketServiceImpl implements BucketService {
     @Override
     public List<Item> getAllItems(Bucket bucket) {
         return bucket.getItems();
+    }
+
+    @Override
+    public Bucket getByUserId(Long userId) {
+        return bucketDao.getAll().stream()
+                .filter(b -> b.getUserId().equals(userId))
+                .findFirst().orElse(bucketDao.create(new Bucket()));
     }
 }

@@ -1,5 +1,7 @@
 package mate.academy.internetshop.dao.impl;
 
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import mate.academy.internetshop.dao.ItemDao;
@@ -12,7 +14,7 @@ import mate.academy.internetshop.model.Item;
 public class ItemDaoImpl implements ItemDao {
     @Override
     public Item create(Item item) {
-        item.setItemId(IdGenerator.getItemId());
+        item.setItemId(IdGenerator.incItemId());
         Storage.items.add(item);
         return item;
     }
@@ -28,7 +30,7 @@ public class ItemDaoImpl implements ItemDao {
     @Override
     public Item update(Item item) {
         Optional<Item> updatedItemOptional = get(item.getItemId());
-        Item updatedItem = updatedItemOptional.get();
+        Item updatedItem = updatedItemOptional.orElseThrow(NoSuchElementException::new);
         updatedItem.setPrice(item.getPrice());
         updatedItem.setItemId(item.getItemId());
         updatedItem.setName(item.getName());
@@ -36,8 +38,17 @@ public class ItemDaoImpl implements ItemDao {
     }
 
     @Override
-    public boolean delete(Long itemId) {
-        Storage.items.removeIf(i -> i.getItemId().equals(itemId));
-        return true;
+    public boolean deleteById(Long itemId) {
+        return Storage.items.removeIf(i -> i.getItemId().equals(itemId));
+    }
+
+    @Override
+    public boolean delete(Item item) {
+        return Storage.items.remove(item);
+    }
+
+    @Override
+    public List<Item> getAll() {
+        return Storage.items;
     }
 }

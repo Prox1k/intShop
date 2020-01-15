@@ -14,7 +14,7 @@ public class Bucket {
     }
 
     public Long getUserId() {
-        return userId;
+        return IdGenerator.getUserId();
     }
 
     public void setUserId(Long userId) {
