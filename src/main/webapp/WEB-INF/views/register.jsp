@@ -5,7 +5,7 @@
 </head>
 <body>
 Let's create a new user!
-<form action="/intShop_war_exploded/servlet/registration" method="post">
+<form action="/intShop_war_exploded/registration" method="post">
     <div class="container">
         <h1>Register</h1>
         <p>Please fill in this form to create an account.</p>
@@ -32,7 +32,7 @@ Let's create a new user!
     </div>
 
     <div class="container signin">
-        <p>Already have an account? <a href="#">Sign in</a>.</p>
+        <p>Already have an account? <a href="/intShop_war_exploded/login">Sign in</a>.</p>
     </div>
 </form>
 </body>
