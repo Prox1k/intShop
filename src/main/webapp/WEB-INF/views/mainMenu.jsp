@@ -6,7 +6,8 @@
 <body>
 
 <h2>MAIN MENU</h2>
-<p></p><button type="button" onclick="location.href ='/intShop_war_exploded/servlet/registration'">Registration</button></p>
+<p></p><button type="button" onclick="location.href ='/intShop_war_exploded/registration'">Registration</button></p>
+<p></p><button type="button" onclick="location.href ='/intShop_war_exploded/login'">Login</button></p>
 <p><button type="button" onclick="location.href ='/intShop_war_exploded/servlet/addItem'">Add item</button></p>
 <p><button type="button" onclick="location.href ='/intShop_war_exploded/servlet/registration'">Add user</button></p>
 <p><button type="button" onclick="location.href ='/intShop_war_exploded/servlet/showAllItems'">Show all items</button></p>
