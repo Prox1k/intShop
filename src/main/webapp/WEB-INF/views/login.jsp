@@ -32,6 +32,7 @@
     <div class="container signin">
         <p>Don't have an account? <a href="/intShop_war_exploded/registration">Sign up</a>.</p>
     </div>
+    <p><a class="selected" href="/intShop_war_exploded/servlet/mainMenu">BACH HOME</a></p>
 </form>
 </body>
 </html>

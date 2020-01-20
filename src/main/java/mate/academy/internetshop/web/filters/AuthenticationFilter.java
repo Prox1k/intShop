@@ -8,9 +8,10 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import mate.academy.internetshop.lib.Inject;
 import mate.academy.internetshop.model.User;
 import mate.academy.internetshop.service.UserService;
@@ -33,19 +34,22 @@ public class AuthenticationFilter implements Filter {
                          FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse resp = (HttpServletResponse) servletResponse;
-        if (req.getCookies() == null) {
+        HttpSession session = req.getSession(false);
+        if (session == null) {
             processUnAuthenticated(req, resp);
             return;
         }
-        for (Cookie cookie : req.getCookies()) {
-            if (cookie.getName().equals("MATE")) {
-                Optional<User> user = userService.getByToken(cookie.getValue());
-                if (user.isPresent()) {
-                    logger.info("User " + user.get().getLogin() + " was authenticated");
-                    chain.doFilter(servletRequest, servletResponse);
-                    return;
-                }
-            }
+        String userToken = (String) req.getSession(true).getAttribute("token");
+        if (userToken == null) {
+            logger.info("session without UserToken");
+            processUnAuthenticated(req, resp);
+            return;
+        }
+        Optional<User> user = userService.getByToken(userToken);
+        if (user.isPresent()) {
+            logger.info("User " + user.get().getLogin() + " was authenticated.");
+            chain.doFilter(servletRequest, servletResponse);
+            return;
         }
         logger.info("User was not authenticated");
         processUnAuthenticated(req, resp);
