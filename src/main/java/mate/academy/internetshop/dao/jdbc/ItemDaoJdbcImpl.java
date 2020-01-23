@@ -16,7 +16,7 @@ import java.util.Optional;
 @Dao
 public class ItemDaoJdbcImpl extends AbstractDao<Item> implements ItemDao {
     private static Logger logger = Logger.getLogger(ItemDaoJdbcImpl.class);
-    private static String DB_NAME = "internet_shop";
+    private static final String DB_NAME = "internet_shop";
 
     public ItemDaoJdbcImpl(Connection connection) {
         super(connection);
@@ -32,9 +32,9 @@ public class ItemDaoJdbcImpl extends AbstractDao<Item> implements ItemDao {
             int rs = stmt.executeUpdate(query);
             logger.info("Created row(s) :" + rs);
         } catch (SQLException e) {
-            logger.error("Connection failed", e);
+            logger.error("Can't create item ", e);
         }
-        return null;
+        return item;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class ItemDaoJdbcImpl extends AbstractDao<Item> implements ItemDao {
             }
             return allItems;
         } catch (SQLException e) {
-            logger.error("Connection failed", e);
+            logger.error("Can't get all items ", e);
         }
         return allItems;
     }
