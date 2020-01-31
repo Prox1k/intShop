@@ -30,6 +30,7 @@ public class LoginController extends HttpServlet {
             User user = userService.login(login, password);
             HttpSession session = req.getSession(true);
             session.setAttribute("token", user.getToken());
+            session.setAttribute("userId", user.getUserId());
             resp.sendRedirect(req.getContextPath() + "/servlet/mainMenu");
         } catch (AuthenticationException e) {
             req.setAttribute("errorMsg","Incorrect login or password");

@@ -30,7 +30,7 @@ public class User {
     }
 
     public Long getUserId() {
-        return IdGenerator.getUserId();
+        return userId;
     }
 
     public void setUserId(Long userId) {

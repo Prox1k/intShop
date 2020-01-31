@@ -8,7 +8,7 @@ public class Item {
     private Double price;
 
     public Item() {
-        this.itemId = IdGenerator.getItemId();
+        this.itemId = getItemId();
     }
 
     public Item(String name, double price) {

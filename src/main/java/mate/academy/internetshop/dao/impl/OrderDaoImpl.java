@@ -10,17 +10,14 @@ import mate.academy.internetshop.lib.Dao;
 import mate.academy.internetshop.model.IdGenerator;
 import mate.academy.internetshop.model.Order;
 
-@Dao
-public class OrderDaoImpl implements OrderDao {
+public class OrderDaoImpl  {
 
-    @Override
     public Order create(Order order) {
         order.setOrderId(IdGenerator.incOrderId());
         Storage.orders.add(order);
         return order;
     }
 
-    @Override
     public Optional<Order> get(Long orderId) {
         return Storage.orders
                 .stream()
@@ -28,7 +25,6 @@ public class OrderDaoImpl implements OrderDao {
                 .findFirst();
     }
 
-    @Override
     public Order update(Order order) {
         Optional<Order> updatedOrderOptional = get(order.getOrderId());
         Order updatedOrder = updatedOrderOptional.orElseThrow(NoSuchElementException::new);
@@ -39,17 +35,14 @@ public class OrderDaoImpl implements OrderDao {
         return updatedOrder;
     }
 
-    @Override
     public boolean deleteById(Long orderId) {
         return Storage.orders.removeIf(o -> o.getOrderId().equals(orderId));
     }
 
-    @Override
     public boolean delete(Order order) {
         return Storage.orders.remove(order);
     }
 
-    @Override
     public List<Order> getAll() {
         return Storage.orders;
     }

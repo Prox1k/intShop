@@ -24,6 +24,7 @@ public class BucketController extends HttpServlet {
         Long userId = (Long) req.getSession().getAttribute("userId");
         User user = userService.get(userId);
         Bucket bucket = bucketService.getByUserId(userId);
+        bucketService.update(bucket);
         req.setAttribute("bucket", bucket);
         req.getRequestDispatcher("/WEB-INF/views/bucket.jsp").forward(req, resp);
     }

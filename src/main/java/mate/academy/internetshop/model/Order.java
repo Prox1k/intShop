@@ -16,6 +16,9 @@ public class Order {
         this.userId = user.getUserId();
     }
 
+    public Order() {
+    }
+
     public Double getAllPrice() {
         return allPrice;
     }

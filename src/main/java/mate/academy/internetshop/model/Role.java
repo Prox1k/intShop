@@ -1,11 +1,11 @@
 package mate.academy.internetshop.model;
 
 public class Role {
-    private final Long id;
+    private Long id;
     private RoleName roleName;
 
     public Role() {
-        this.id = IdGenerator.incRoleId();
+        this.id = getId();
     }
 
     public Role(RoleName rolename) {
@@ -14,7 +14,11 @@ public class Role {
     }
 
     public Long getId() {
-        return IdGenerator.getRoleId();
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public RoleName getRoleName() {

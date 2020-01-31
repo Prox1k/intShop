@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import mate.academy.internetshop.lib.Inject;
 import mate.academy.internetshop.model.Bucket;
 import mate.academy.internetshop.model.Item;
+import mate.academy.internetshop.model.Order;
 import mate.academy.internetshop.model.User;
 import mate.academy.internetshop.service.BucketService;
 import mate.academy.internetshop.service.OrderService;
@@ -29,9 +30,12 @@ public class CompleteOrderController extends HttpServlet {
         Long userId = (Long) req.getSession().getAttribute("userId");
         Bucket bucket = bucketService.getByUserId(userId);
         User user = userService.get(userId);
-        List<Item> items = bucket.getItems();
-        orderService.completeOrder(items, user);
+        Order order = orderService.completeOrder(bucket.getItems(), user);
         bucketService.clear(bucket);
+        List<Item> items = bucket.getItems();
+        req.setAttribute("items", items);
+        req.setAttribute("amount", order.getAllPrice());
+        req.setAttribute("order_id", order.getOrderId());
         resp.sendRedirect(req.getContextPath() + "/servlet/showOrder");
     }
 }

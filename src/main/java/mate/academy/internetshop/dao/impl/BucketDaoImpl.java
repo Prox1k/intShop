@@ -10,16 +10,13 @@ import mate.academy.internetshop.lib.Dao;
 import mate.academy.internetshop.model.Bucket;
 import mate.academy.internetshop.model.IdGenerator;
 
-@Dao
-public class BucketDaoImpl implements BucketDao {
-    @Override
+public class BucketDaoImpl  {
     public Bucket create(Bucket bucket) {
         bucket.setBucketId(IdGenerator.incBucketId());
         Storage.buckets.add(bucket);
         return bucket;
     }
 
-    @Override
     public Optional<Bucket> get(Long bucketId) {
         return Storage.buckets
                 .stream()
@@ -27,7 +24,6 @@ public class BucketDaoImpl implements BucketDao {
                 .findFirst();
     }
 
-    @Override
     public Bucket update(Bucket bucket) {
         Optional<Bucket> updatedBucketOptional = get(bucket.getBucketId());
         Bucket updatedBucket = updatedBucketOptional.orElseThrow(NoSuchElementException::new);
@@ -37,18 +33,18 @@ public class BucketDaoImpl implements BucketDao {
         return updatedBucket;
     }
 
-    @Override
     public boolean deleteById(Long bucketId) {
         return Storage.buckets.removeIf(bucket -> bucket.getBucketId().equals(bucketId));
     }
 
-    @Override
     public boolean delete(Bucket bucket) {
         return Storage.buckets.remove(bucket);
     }
 
-    @Override
     public List<Bucket> getAll() {
         return Storage.buckets;
+    }
+
+    public void clear(Bucket bucket) {
     }
 }
