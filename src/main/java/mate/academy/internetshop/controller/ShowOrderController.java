@@ -25,7 +25,8 @@ public class ShowOrderController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         Long userId = (Long) req.getSession().getAttribute("userId");
-        User user = userService.get(userId);
+        User user = null;
+        user = userService.get(userId);
         List<Order> userOrders = orderService.getUserOrders(user);
         req.setAttribute("orders", userOrders);
         req.getRequestDispatcher("/WEB-INF/views/showOrder.jsp").forward(req, resp);

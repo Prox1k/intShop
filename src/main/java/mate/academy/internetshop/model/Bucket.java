@@ -13,8 +13,13 @@ public class Bucket {
         this.items = new ArrayList<>();
     }
 
+    public Bucket(Long userId) {
+        this.userId = userId;
+        items = new ArrayList<>();
+    }
+
     public Long getUserId() {
-        return IdGenerator.getUserId();
+        return userId;
     }
 
     public void setUserId(Long userId) {

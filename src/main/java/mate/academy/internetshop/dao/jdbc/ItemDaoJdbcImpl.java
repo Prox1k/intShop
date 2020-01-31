@@ -6,6 +6,7 @@ import mate.academy.internetshop.model.Item;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,8 +16,10 @@ import java.util.Optional;
 
 @Dao
 public class ItemDaoJdbcImpl extends AbstractDao<Item> implements ItemDao {
-    private static Logger logger = Logger.getLogger(ItemDaoJdbcImpl.class);
-    private static final String DB_NAME = "internet_shop";
+    private static final Logger logger = Logger.getLogger(ItemDaoJdbcImpl.class);
+    private static final String ITEMS_TABLE = "items";
+    private static final String BUCKET_ITEM_TABLE = "bucket_item";
+    private static final String ORDER_ITEM_TABLE = "order_items";
 
     public ItemDaoJdbcImpl(Connection connection) {
         super(connection);
@@ -24,101 +27,106 @@ public class ItemDaoJdbcImpl extends AbstractDao<Item> implements ItemDao {
 
     @Override
     public Item create(Item item) {
-        String name = item.getName();
-        Double price = item.getPrice();
-        String query = String.format("INSERT INTO %s.items (name, price) VALUES('%s', %.0f)",
-                DB_NAME, name, price);
-        try (Statement stmt = connection.createStatement()) {
-            int rs = stmt.executeUpdate(query);
-            logger.info("Created row(s) :" + rs);
+        String query = String.format("INSERT INTO %s (name, price) VALUES(?, ?)",
+                ITEMS_TABLE);
+        try (PreparedStatement ps = connection.prepareStatement(query,
+                Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, item.getName());
+            ps.setDouble(2, item.getPrice());
+            ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Can't create item ", e);
+            logger.warn("Can't create item in BD", e);
         }
         return item;
     }
 
     @Override
     public Optional<Item> get(Long id) {
-        String query = String.format("SELECT * FROM %s.items WHERE item_id=%d;", DB_NAME, id);
-        try (Statement stmt = connection.createStatement()) {
-            ResultSet rs = stmt.executeQuery(query);
+        String query = String.format("SELECT * FROM %s WHERE item_id=?;", ITEMS_TABLE);
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setLong(1, id);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                long itemId = rs.getLong("item_id");
-                String name = rs.getString("name");
-                double price = rs.getDouble("price");
                 Item item = new Item();
-                item.setName(name);
-                item.setPrice(price);
-                item.setItemId(itemId);
+                item.setName(rs.getString("name"));
+                item.setPrice(rs.getDouble("price"));
+                item.setItemId(rs.getLong("item_id"));
                 return Optional.of(item);
             }
         } catch (SQLException e) {
-            logger.warn("Can't find item with id = " + id);
+            logger.warn("Can't find item with id = " + id, e);
         }
         return Optional.empty();
     }
 
     @Override
     public Item update(Item item) {
-        String query = String.format("update %s.items set name='%s' ,price=%.0f "
-                + "where item_id=%s;", DB_NAME, item.getName(), item.getPrice(), item.getItemId());
-        try (Statement stmt = connection.createStatement()) {
-            int rs = stmt.executeUpdate(query);
-            logger.info("Updated row(s) :" + rs);
+        String query = String.format("UPDATE %s SET name=? ,price=? "
+                + "WHERE item_id=?;", ITEMS_TABLE);
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, item.getName());
+            ps.setDouble(2, item.getPrice());
+            ps.setLong(3, item.getItemId());
+            ps.executeUpdate();
         } catch (SQLException e) {
-            logger.warn("Can't find item with id = " + item.getItemId());
+            logger.warn("Can't find item with id = " + item.getItemId(), e);
         }
         return item;
     }
 
     @Override
     public boolean deleteById(Long id) {
-        String query = String.format("delete from %s.items where item_id=%d;",
-                DB_NAME, id);
-        try (Statement stmt = connection.createStatement()) {
-            int rs = stmt.executeUpdate(query);
-            logger.info("Deleted row(s) :" + rs);
+        Optional<Item> item = get(id);
+        if (item.isPresent()) {
+            String query = String.format("DELETE FROM %s WHERE item_id=?", BUCKET_ITEM_TABLE);
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setLong(1, id);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                logger.warn("Can't delete item by id in bucket_item");
+            }
+
+            query = String.format("DELETE FROM %s WHERE item_id=?", ORDER_ITEM_TABLE);
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setLong(1, id);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                logger.warn("Can't delete item by id in order_item");
+            }
+
+            query = String.format("DELETE FROM %s WHERE item_id=?", ITEMS_TABLE);
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setLong(1, id);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                logger.warn("Can't delete item by id");
+            }
             return true;
-        } catch (SQLException e) {
-            logger.warn("Can't find item with id = " + id);
-            return false;
         }
+        return false;
     }
 
     @Override
     public boolean delete(Item item) {
-        String query = String.format("delete from %s.items where item_id=%d;",
-                DB_NAME, item.getItemId());
-        try (Statement stmt = connection.createStatement()) {
-            int rs = stmt.executeUpdate(query);
-            logger.info("Deleted row(s) :" + rs);
-            return true;
-        } catch (SQLException e) {
-            logger.warn("Can't find item with id = " + item.getItemId());
-            return false;
-        }
+        return deleteById(item.getItemId());
     }
 
     @Override
     public List<Item> getAll() {
-        List<Item> allItems = new ArrayList<>();
-        String query = String.format("select * from %s.items", DB_NAME);
-        try (Statement stmt = connection.createStatement()) {
-            ResultSet rs = stmt.executeQuery(query);
+        List<Item> items = new ArrayList<>();
+        String query = String.format("SELECT * FROM %s", ITEMS_TABLE);
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                long itemId = rs.getLong("item_id");
-                String name = rs.getString("name");
-                double price = rs.getDouble("price");
                 Item item = new Item();
-                item.setName(name);
-                item.setPrice(price);
-                item.setItemId(itemId);
-                allItems.add(item);
+                item.setName(rs.getString("name"));
+                item.setPrice(rs.getDouble("price"));
+                item.setItemId(rs.getLong("item_id"));
+                items.add(item);
             }
-            return allItems;
         } catch (SQLException e) {
             logger.error("Can't get all items ", e);
         }
-        return allItems;
+        return items;
     }
 }

@@ -10,17 +10,14 @@ import mate.academy.internetshop.lib.Dao;
 import mate.academy.internetshop.model.IdGenerator;
 import mate.academy.internetshop.model.User;
 
-@Dao
-public class UserDaoImpl implements UserDao {
+public class UserDaoImpl {
 
-    @Override
     public User create(User user) {
         user.setUserId(IdGenerator.incUserId());
         Storage.users.add(user);
         return user;
     }
 
-    @Override
     public Optional<User> get(Long userId) {
         return Storage.users
                 .stream()
@@ -28,7 +25,6 @@ public class UserDaoImpl implements UserDao {
                 .findFirst();
     }
 
-    @Override
     public User update(User user) {
         Optional<User> updatedUserOptional = get(user.getUserId());
         User updatedUser = updatedUserOptional.orElseThrow(NoSuchElementException::new);
@@ -37,29 +33,24 @@ public class UserDaoImpl implements UserDao {
         return updatedUser;
     }
 
-    @Override
     public boolean deleteById(Long userId) {
         return Storage.users.removeIf(u -> u.getUserId().equals(userId));
     }
 
-    @Override
     public boolean delete(User user) {
         return Storage.users.remove(user);
     }
 
-    @Override
     public List<User> getAll() {
         return Storage.users;
     }
 
-    @Override
     public Optional<User> findByLogin(String login) {
         return Storage.users.stream()
                 .filter(u -> u.getLogin().equals(login))
                 .findFirst();
     }
 
-    @Override
     public Optional<User> findByToken(String token) {
         return Storage.users.stream()
                 .filter(u -> u.getToken().equals(token))

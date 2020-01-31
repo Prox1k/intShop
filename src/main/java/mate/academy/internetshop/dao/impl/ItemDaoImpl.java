@@ -10,16 +10,13 @@ import mate.academy.internetshop.lib.Dao;
 import mate.academy.internetshop.model.IdGenerator;
 import mate.academy.internetshop.model.Item;
 
-@Dao
-public class ItemDaoImpl implements ItemDao {
-    @Override
+public class ItemDaoImpl {
     public Item create(Item item) {
         item.setItemId(IdGenerator.incItemId());
         Storage.items.add(item);
         return item;
     }
 
-    @Override
     public Optional<Item> get(Long itemId) {
         return Storage.items
                 .stream()
@@ -27,7 +24,6 @@ public class ItemDaoImpl implements ItemDao {
                 .findFirst();
     }
 
-    @Override
     public Item update(Item item) {
         Optional<Item> updatedItemOptional = get(item.getItemId());
         Item updatedItem = updatedItemOptional.orElseThrow(NoSuchElementException::new);
@@ -37,17 +33,14 @@ public class ItemDaoImpl implements ItemDao {
         return updatedItem;
     }
 
-    @Override
     public boolean deleteById(Long itemId) {
         return Storage.items.removeIf(i -> i.getItemId().equals(itemId));
     }
 
-    @Override
     public boolean delete(Item item) {
         return Storage.items.remove(item);
     }
 
-    @Override
     public List<Item> getAll() {
         return Storage.items;
     }
